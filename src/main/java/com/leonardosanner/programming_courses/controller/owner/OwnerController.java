@@ -4,6 +4,7 @@ import com.leonardosanner.programming_courses.dto.owner.AuthOwnerDTO;
 import com.leonardosanner.programming_courses.dto.owner.OwnerRegisterDTO;
 import com.leonardosanner.programming_courses.entity.owner.OwnerEntity;
 import com.leonardosanner.programming_courses.repository.OwnerRepository;
+import com.leonardosanner.programming_courses.service.security.OwnerTokenGenerationUseCase;
 import com.leonardosanner.programming_courses.service.useCases.owner.CreateOwnerUseCase;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,9 @@ public class OwnerController {
 
     @Autowired
     private OwnerRepository ownerRepository;
+
+    @Autowired
+    private OwnerTokenGenerationUseCase ownerTokenGenerationUseCase;
 
     @PostMapping("/")
     public ResponseEntity<Object> create(@Valid @RequestBody OwnerEntity ownerEntity) {
@@ -41,6 +45,7 @@ public class OwnerController {
 
     @GetMapping("/auth/token")
     public ResponseEntity<Object> generateToken(@RequestBody AuthOwnerDTO authOwnerDTO) {
-        return null;
+
+        return ownerTokenGenerationUseCase.execute(authOwnerDTO);
     }
 }
