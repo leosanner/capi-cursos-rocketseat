@@ -1,6 +1,9 @@
 package com.leonardosanner.programming_courses.entity.owner;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -16,12 +19,18 @@ import java.util.UUID;
 @Entity(name = "owner")
 public class OwnerEntity {
 
-    private UUID id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Pattern(regexp = "^[^0-9]*$", message = "Numbers are not accepted.")
     @Length(max=50, message = "The name must contain at most (50) characters.")
     @NotBlank
     private String name;
+
+    @NotBlank
+    @Length(max=50, message = "The name must contain at most (50) characters.")
+    private String password;
 
     @Email(message = "Invalid email received.")
     @NotBlank
