@@ -1,0 +1,7 @@
+server.port=application_port_here
+spring.datasource.url=jdbc:sql_here://localhost:port_here/database_name_here
+
+spring.datasource.username=username_here
+spring.datasource.password=password_here
+
+spring.jpa.hibernate.ddl-auto=create or update
