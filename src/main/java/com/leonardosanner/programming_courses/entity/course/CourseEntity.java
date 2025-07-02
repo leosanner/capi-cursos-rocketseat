@@ -20,12 +20,12 @@ public class CourseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+    @NotBlank(message = "This field should not be blank")
     private String name;
 
     @Pattern(regexp = "^[^0-9]*$", message = "Numbers are not accepted.")
     @Length(min = 10, max = 30, message = "The category must be between (10) and (30).")
-    @NotBlank
+    @NotBlank(message = "This field should not be blank")
     private String category;
 
     @Enumerated(EnumType.STRING)

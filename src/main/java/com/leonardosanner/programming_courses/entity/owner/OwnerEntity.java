@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import lombok.Builder;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
+@Builder
 @Entity(name = "owner")
 public class OwnerEntity {
 
@@ -25,15 +27,15 @@ public class OwnerEntity {
 
     @Pattern(regexp = "^[^0-9]*$", message = "Numbers are not accepted.")
     @Length(max=50, message = "The name must contain at most (50) characters.")
-    @NotBlank
+    @NotBlank(message = "This field should not be blank.")
     private String name;
 
-    @NotBlank
+    @NotBlank(message = "This field should not be blank")
     @Length(max=50, message = "The name must contain at most (50) characters.")
     private String password;
 
     @Email(message = "Invalid email received.")
-    @NotBlank
+    @NotBlank(message = "This field should not be blank")
     private String email;
 
     @CreationTimestamp
