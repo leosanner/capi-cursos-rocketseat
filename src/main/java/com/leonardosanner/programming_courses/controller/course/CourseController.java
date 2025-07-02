@@ -2,6 +2,7 @@ package com.leonardosanner.programming_courses.controller.course;
 
 
 import com.leonardosanner.programming_courses.dto.course.UpdateCourseDTO;
+import com.leonardosanner.programming_courses.entity.course.ChangeActivityCourseDTO;
 import com.leonardosanner.programming_courses.entity.course.CourseEntity;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class CourseController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> update(@PathVariable Long id, UpdateCourseDTO updateCourseDTO) { // add a DTO with validations
+    public ResponseEntity<Object> update(@PathVariable Long id, UpdateCourseDTO updateCourseDTO) {
         return null; // response status
     }
 
@@ -33,7 +34,7 @@ public class CourseController {
     }
 
     @PatchMapping("/course/{id}/active")
-    public ResponseEntity<Object> patch(@PathVariable Long id){ // add a DTO with validations
+    public ResponseEntity<Object> patch(@PathVariable Long id, @RequestBody ChangeActivityCourseDTO changeActivityCourseDTO){
         return null; // response status
     }
 }
