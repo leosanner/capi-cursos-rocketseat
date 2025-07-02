@@ -2,7 +2,9 @@ package com.leonardosanner.programming_courses.controller.owner;
 
 import com.leonardosanner.programming_courses.dto.owner.AuthOwnerDTO;
 import com.leonardosanner.programming_courses.entity.owner.OwnerEntity;
+import com.leonardosanner.programming_courses.repository.OwnerRepository;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,8 +12,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/owner")
 public class OwnerController {
 
+    @Autowired
+    private OwnerRepository ownerRepository;
+
+    
     @PostMapping("/")
     public ResponseEntity<Object> create(@Valid @RequestBody OwnerEntity ownerEntity) {
+
         return null;
     }
 
