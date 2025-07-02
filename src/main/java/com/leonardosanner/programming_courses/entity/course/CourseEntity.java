@@ -1,6 +1,7 @@
 package com.leonardosanner.programming_courses.entity.course;
 
 
+import com.leonardosanner.programming_courses.entity.owner.OwnerEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -18,7 +19,7 @@ public class CourseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    
+
     @NotBlank
     private String name;
 
@@ -29,6 +30,10 @@ public class CourseEntity {
 
     @Enumerated(EnumType.STRING)
     private CourseActive status;
+
+    @ManyToOne
+    @JoinColumn(name = "owner_id", nullable = false)
+    private OwnerEntity owner;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
