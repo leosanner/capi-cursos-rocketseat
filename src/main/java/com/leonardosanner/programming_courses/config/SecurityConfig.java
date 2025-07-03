@@ -30,6 +30,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         auth -> auth
                                 .requestMatchers("/owner/").permitAll()
+                                .requestMatchers("/owner/auth/token").permitAll()
                 )
                 .addFilterBefore(securityFilter, BasicAuthenticationFilter.class);
         ;

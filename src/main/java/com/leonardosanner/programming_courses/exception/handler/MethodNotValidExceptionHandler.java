@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @ControllerAdvice
-public class MethodNotValidException {
+public class MethodNotValidExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<List<GenericErrorDTO>> methodArgumentNotValidExceptionHandler

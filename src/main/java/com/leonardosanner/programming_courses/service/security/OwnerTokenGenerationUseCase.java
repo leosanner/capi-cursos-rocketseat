@@ -1,5 +1,6 @@
 package com.leonardosanner.programming_courses.service.security;
 
+import com.leonardosanner.programming_courses.dto.JsonWebTokenDTO;
 import com.leonardosanner.programming_courses.dto.owner.AuthOwnerDTO;
 import com.leonardosanner.programming_courses.entity.owner.OwnerEntity;
 import com.leonardosanner.programming_courses.exception.OwnerNotFoundException;
@@ -18,7 +19,9 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Date;
 
 @Service
@@ -36,43 +39,55 @@ public class OwnerTokenGenerationUseCase {
     @Autowired
     private OwnerRepository ownerRepository;
 
+    // primary method
     public ResponseEntity<Object> execute(AuthOwnerDTO authOwnerDTO) {
 
-        OwnerEntity owner = this.verifyOwnerExistence(authOwnerDTO.getUsername());
+        String ownerPassword = this.verifyOwnerExistence(authOwnerDTO.getEmail()).getPassword();
 
-        if (verifyPasswordMatches(authOwnerDTO.getPassword(), owner.getPassword())) {
-            String token = tokenGeneration(authOwnerDTO.getUsername());
+        if (verifyPasswordMatches(authOwnerDTO.getPassword(), ownerPassword)) {
+            JsonWebTokenDTO token = tokenGeneration(authOwnerDTO.getEmail());
 
             return ResponseEntity.ok().body(token);
         }
 
-        return ResponseEntity.status(HttpStatusCode.valueOf(401)).body("Invalid Credentials.");
+        return ResponseEntity.status(HttpStatusCode.valueOf(401)).body("Mismatch between passwords.");
     }
 
-    private OwnerEntity verifyOwnerExistence(String ownerName) {
-        OwnerEntity owner =  ownerRepository.findByName(ownerName).orElseThrow(()->
+    // owner existence
+    private OwnerEntity verifyOwnerExistence(String ownerEmail) {
+        OwnerEntity owner =  ownerRepository.findByEmail(ownerEmail).orElseThrow(()->
                 new OwnerNotFoundException("Owner/User not found"));
 
         return owner;
     }
 
+    // password matches
     private boolean verifyPasswordMatches(String ownerPasswordInformed, String ownerPasswordEntity){
         return passwordEncoder.matches(ownerPasswordInformed, ownerPasswordEntity);
     }
 
-    private String tokenGeneration(String ownerName) {
+    // JWT generation
+    private JsonWebTokenDTO tokenGeneration(String ownerEmail) {
         Instant currentTime = Instant.now();
+        Instant expirationTime = currentTime.plus(1, ChronoUnit.HOURS);
         SecretKey secret = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
 
         String jws = Jwts.builder()
-                .subject(ownerName)
+                .subject(ownerEmail)
                 .signWith(secret)
                 .issuedAt(Date.from(currentTime))
-                .expiration(Date.from(currentTime.plus(1, ChronoUnit.HOURS)))
+                .expiration(Date.from(expirationTime))
                 .claim("role", "owner")
                 .issuer(issuer)
                 .compact();
 
-        return jws;
+        ZoneId zoneId = ZoneId.systemDefault();
+
+        return JsonWebTokenDTO.builder()
+                .token(jws)
+                .expiresAt(LocalDateTime.ofInstant(expirationTime, zoneId))
+                .roles(Arrays.asList("owner"))
+                .issuer(issuer)
+                .build();
     }
 }

@@ -9,7 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CreateOwnerUseCase {
+public class    CreateOwnerUseCase {
 
     @Autowired
     private OwnerRepository ownerRepository;
@@ -18,11 +18,13 @@ public class CreateOwnerUseCase {
     private PasswordEncoder passwordEncoder;
 
     public void execute(OwnerRegisterDTO ownerRegisterDTO) {
-       ownerRepository.findByName(ownerRegisterDTO.getName()).ifPresent(
+//        System.out.println("Searching User...");
+        ownerRepository.findByEmail(ownerRegisterDTO.getEmail()).ifPresent(
                owner -> {
+//                   System.out.println("User Duplicated");
                    throw new RegisterAlreadyExistsException("Owner/User already exists.");
                }
-       );
+        );
 
        String encodedPassword = passwordEncoder.encode(ownerRegisterDTO.getPassword());
 
