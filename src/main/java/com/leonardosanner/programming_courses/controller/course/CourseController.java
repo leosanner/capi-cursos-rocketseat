@@ -1,14 +1,18 @@
 package com.leonardosanner.programming_courses.controller.course;
 
 
+import com.leonardosanner.programming_courses.dto.course.CreateCourseDTO;
 import com.leonardosanner.programming_courses.dto.course.UpdateCourseDTO;
 import com.leonardosanner.programming_courses.entity.course.ChangeActivityCourseDTO;
 import com.leonardosanner.programming_courses.entity.course.CourseEntity;
 import com.leonardosanner.programming_courses.repository.CourseRepository;
 import com.leonardosanner.programming_courses.repository.OwnerRepository;
+import com.leonardosanner.programming_courses.service.persistenceService.CourseDataService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,9 +27,12 @@ public class CourseController {
     @Autowired
     private CourseRepository courseRepository;
 
+    @Autowired
+    private CourseDataService courseDataService;
+
     @PostMapping("/")
-    public void create(@Valid @RequestBody CourseEntity courseEntity) {
-        System.out.println("Inside servlet post request...");
+    public void create(@Valid @RequestBody CreateCourseDTO createCourseDTO) {
+        this.courseDataService.createCourse(createCourseDTO);
     }
 
     @GetMapping("/")
