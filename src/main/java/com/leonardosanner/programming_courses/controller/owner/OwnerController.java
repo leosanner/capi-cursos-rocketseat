@@ -45,7 +45,7 @@ public class OwnerController {
 
     @GetMapping("/auth/token")
     public ResponseEntity<Object> generateToken(@RequestBody AuthOwnerDTO authOwnerDTO) {
-        System.out.println("Get into servlet...");
+
         return ownerTokenGenerationUseCase.execute(authOwnerDTO);
     }
 }

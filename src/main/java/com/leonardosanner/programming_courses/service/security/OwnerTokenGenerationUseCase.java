@@ -77,7 +77,7 @@ public class OwnerTokenGenerationUseCase {
                 .signWith(secret)
                 .issuedAt(Date.from(currentTime))
                 .expiration(Date.from(expirationTime))
-                .claim("role", "owner")
+                .claim("roles", "OWNER")
                 .issuer(issuer)
                 .compact();
 
@@ -86,7 +86,7 @@ public class OwnerTokenGenerationUseCase {
         return JsonWebTokenDTO.builder()
                 .token(jws)
                 .expiresAt(LocalDateTime.ofInstant(expirationTime, zoneId))
-                .roles(Arrays.asList("owner"))
+                .roles(Arrays.asList("OWNER"))
                 .issuer(issuer)
                 .build();
     }

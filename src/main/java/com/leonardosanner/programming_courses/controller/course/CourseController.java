@@ -4,7 +4,10 @@ package com.leonardosanner.programming_courses.controller.course;
 import com.leonardosanner.programming_courses.dto.course.UpdateCourseDTO;
 import com.leonardosanner.programming_courses.entity.course.ChangeActivityCourseDTO;
 import com.leonardosanner.programming_courses.entity.course.CourseEntity;
+import com.leonardosanner.programming_courses.repository.CourseRepository;
+import com.leonardosanner.programming_courses.repository.OwnerRepository;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,8 +17,15 @@ import java.util.List;
 @RequestMapping("/course")
 public class CourseController {
 
+    @Autowired
+    private OwnerRepository ownerRepository;
+
+    @Autowired
+    private CourseRepository courseRepository;
+
     @PostMapping("/")
     public void create(@Valid @RequestBody CourseEntity courseEntity) {
+        System.out.println("Inside servlet post request...");
     }
 
     @GetMapping("/")
