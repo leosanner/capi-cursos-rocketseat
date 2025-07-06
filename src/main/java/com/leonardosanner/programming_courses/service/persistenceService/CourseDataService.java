@@ -1,6 +1,7 @@
 package com.leonardosanner.programming_courses.service.persistenceService;
 
 import com.leonardosanner.programming_courses.dto.course.CreateCourseDTO;
+import com.leonardosanner.programming_courses.dto.course.SearchCourseDTO;
 import com.leonardosanner.programming_courses.entity.course.CourseActive;
 import com.leonardosanner.programming_courses.entity.course.CourseEntity;
 import com.leonardosanner.programming_courses.entity.owner.OwnerEntity;
@@ -9,10 +10,14 @@ import com.leonardosanner.programming_courses.exception.RegisterAlreadyExistsExc
 import com.leonardosanner.programming_courses.repository.CourseRepository;
 import com.leonardosanner.programming_courses.repository.OwnerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
+import java.util.List;
 
 @Service
 public class CourseDataService {
@@ -23,7 +28,7 @@ public class CourseDataService {
     @Autowired
     private OwnerRepository ownerRepository;
 
-    public void createCourse(CreateCourseDTO createCourseDTO) {
+    public ResponseEntity<Object> createCourse(CreateCourseDTO createCourseDTO) {
         // get email (subject)
         // find owner by email -> throw exception if not find
         // verify if course already exists (for the current owner)
@@ -57,6 +62,40 @@ public class CourseDataService {
 
         this.courseRepository.save(newCourseEntity);
         System.out.println("Course created.");
+
+        return ResponseEntity.ok().body("Course created with success.");
+    }
+
+    public List<CourseEntity> getCourses(SearchCourseDTO searchCourseDTO) {
+        // verify witch field has been informed and search in the repository by the field
+        // 2 options -> name, category
+        // any user in the future can access this resource
+
+        if (searchCourseDTO.getName() != null && searchCourseDTO.getCategory()!=null) {
+            return this.courseRepository.findByNameAndCategory(
+                    searchCourseDTO.getName(), searchCourseDTO.getCategory()
+            );
+        }
+
+
+        if (searchCourseDTO.getName() != null && !searchCourseDTO.getName().isBlank()) {
+             var entity = this.courseRepository.findByName(searchCourseDTO.getName());
+
+             if (entity.isPresent()) {
+                 return Arrays.asList(entity.get());
+             } else {
+                 return null;
+             }
+        }
+
+        if (searchCourseDTO.getCategory() != null && !searchCourseDTO.getCategory().isBlank()) {
+            List<CourseEntity> listEntities = this.courseRepository
+                    .findByCategory(searchCourseDTO.getCategory());
+
+            return listEntities;
+        }
+
+        return null;
     }
 
     private void verifyCourseAlreadyExists(CourseEntity courseEntity, OwnerEntity ownerEntity) {
