@@ -2,6 +2,7 @@ package com.leonardosanner.programming_courses.service.persistenceService;
 
 import com.leonardosanner.programming_courses.dto.course.CreateCourseDTO;
 import com.leonardosanner.programming_courses.dto.course.SearchCourseDTO;
+import com.leonardosanner.programming_courses.dto.course.UpdateCourseDTO;
 import com.leonardosanner.programming_courses.entity.course.CourseActive;
 import com.leonardosanner.programming_courses.entity.course.CourseEntity;
 import com.leonardosanner.programming_courses.entity.owner.OwnerEntity;
@@ -77,7 +78,6 @@ public class CourseDataService {
             );
         }
 
-
         if (searchCourseDTO.getName() != null && !searchCourseDTO.getName().isBlank()) {
              var entity = this.courseRepository.findByName(searchCourseDTO.getName());
 
@@ -96,6 +96,39 @@ public class CourseDataService {
         }
 
         return null;
+    }
+
+
+    public void editCourseById(Long id, UpdateCourseDTO updateCourseDTO) {
+        CourseEntity result = this.courseRepository.findById(id).orElseThrow(
+                () -> new RuntimeException("Course not founded")
+        );
+
+        String ownerEmail = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal()
+                .toString();
+
+        String resultOwnerEmail = result.getOwner().getEmail();
+
+        if (!resultOwnerEmail.equals(ownerEmail)) {
+            throw new RuntimeException("Only the owner is allowed to edit this course");
+        }
+
+        String newName = updateCourseDTO.getName();
+        String newCategory = updateCourseDTO.getCategory();
+
+        if (!newName.isBlank()) {
+            result.setName(newName);
+        }
+
+        if (!newCategory.isBlank()) {
+            result.setCategory(newCategory);
+        }
+
+        if (!newName.isBlank() || !newCategory.isBlank()) {
+            this.courseRepository.save(result);
+        }
     }
 
     private void verifyCourseAlreadyExists(CourseEntity courseEntity, OwnerEntity ownerEntity) {

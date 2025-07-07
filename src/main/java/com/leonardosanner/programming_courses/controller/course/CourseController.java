@@ -42,8 +42,10 @@ public class CourseController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> update(@PathVariable Long id, UpdateCourseDTO updateCourseDTO) {
-        return null; // response status
+    public ResponseEntity<Object> update(@PathVariable Long id, @RequestBody UpdateCourseDTO updateCourseDTO) {
+        System.out.println(id);
+        this.courseDataService.editCourseById(id, updateCourseDTO);
+        return ResponseEntity.ok().body("Course edited."); // response status
     }
 
     @DeleteMapping("/{id}")
