@@ -7,5 +7,4 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ChangeActivityCourseDTO {
 
-    private String activate;
-}
+    private String activate;}

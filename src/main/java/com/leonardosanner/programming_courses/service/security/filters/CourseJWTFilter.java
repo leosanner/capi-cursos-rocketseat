@@ -47,7 +47,6 @@ public class CourseJWTFilter extends OncePerRequestFilter{
         List<SimpleGrantedAuthority> authorizations = new ArrayList<>();
         authorizations.add(new SimpleGrantedAuthority("ROLE_" + ownerJWTCredentialsDTO.getRoles().toUpperCase())); // stream map list later
 
-        System.out.println(authorizations);
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                 ownerJWTCredentialsDTO.getEmail(),
                 null,

@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.List;
@@ -94,46 +93,76 @@ public class CourseDataService {
 
             return listEntities;
         }
-
         return null;
     }
 
 
     public void editCourseById(Long id, UpdateCourseDTO updateCourseDTO) {
-        CourseEntity result = this.courseRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Course not founded")
-        );
+        // Verify if a course with the informed id exists
+        // Get the owner email via JWT principal
+        // Compare if the owner JWT email equals the email of the owner course
+        // If true -> change with the data from updateCourseDTO
 
-        String ownerEmail = SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getPrincipal()
-                .toString();
-
-        String resultOwnerEmail = result.getOwner().getEmail();
-
-        if (!resultOwnerEmail.equals(ownerEmail)) {
-            throw new RuntimeException("Only the owner is allowed to edit this course");
-        }
+        CourseEntity courseEntity = this.checkRequest(id);
 
         String newName = updateCourseDTO.getName();
         String newCategory = updateCourseDTO.getCategory();
 
         if (!newName.isBlank()) {
-            result.setName(newName);
+            courseEntity.setName(newName);
         }
 
         if (!newCategory.isBlank()) {
-            result.setCategory(newCategory);
+            courseEntity.setCategory(newCategory);
         }
 
         if (!newName.isBlank() || !newCategory.isBlank()) {
-            this.courseRepository.save(result);
+            this.courseRepository.save(courseEntity);
         }
+    }
+
+    public void deleteCourseById(Long id) {
+        CourseEntity courseEntity = this.checkRequest(id);
+
+        this.courseRepository.delete(courseEntity);
+    }
+
+    public void changeCourseActiveStatus(Long id){
+        CourseEntity courseEntity = this.checkRequest(id);
+
+        if (courseEntity.getStatus().getActiveStatus()) {
+            courseEntity.setStatus(CourseActive.OFFLINE);
+        } else {
+            courseEntity.setStatus(CourseActive.ONLINE);
+        }
+
+        this.courseRepository.save(courseEntity);
     }
 
     private void verifyCourseAlreadyExists(CourseEntity courseEntity, OwnerEntity ownerEntity) {
         if (courseEntity.getOwner().getId().equals(ownerEntity.getId())) {
             throw new RegisterAlreadyExistsException("The requested course already exists.");
         }
+    }
+
+    private CourseEntity checkRequest(Long id) {
+        // verify if the course exists and if the JWT principal (email information exists)
+
+        CourseEntity courseEntity = this.courseRepository.findById(id).orElseThrow(
+                () -> new RuntimeException("Course not founded")
+        );
+
+        String ownerEmailJWT = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal()
+                .toString();
+
+
+        if (!courseEntity.getOwner().getEmail().equals(ownerEmailJWT)) {
+            throw new RuntimeException("Only the owner is allowed to delete this course");
+        }
+
+        return courseEntity;
     }
 }

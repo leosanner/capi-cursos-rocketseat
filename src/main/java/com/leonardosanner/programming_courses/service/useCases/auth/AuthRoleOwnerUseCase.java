@@ -29,7 +29,6 @@ public class AuthRoleOwnerUseCase {
                 .build()
                 .parseSignedClaims(token);
 
-        System.out.println(tokenParsed.getPayload().get("roles"));
 
         return OwnerJWTCredentialsDTO
                 .builder()
